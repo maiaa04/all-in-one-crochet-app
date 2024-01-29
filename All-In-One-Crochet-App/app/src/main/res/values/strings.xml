@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">All-In-One Crochet</string>
+    <string name="app_description">Welcome to the All-In-One Crochet App! You\'ll finally get all
+        the necessary crochet tools in one place - row counters, your patterns, and a list of all the
+        materials you use. Hope you enjoy!</string>
+    <string name="sign_up"><u>Sign up</u></string>
+    <string name="sign_in"><u>Sign in</u></string>
+    <string name="register_successfully">You are registered successfully</string>
+</resources>

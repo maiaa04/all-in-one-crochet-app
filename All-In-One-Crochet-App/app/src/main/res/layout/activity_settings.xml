@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <ImageView
+            android:id="@+id/profile_pic"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:srcCompat="@drawable/profile_icon"
+            android:backgroundTint="@android:color/transparent"
+            app:tint="?attr/android:textColor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            android:layout_marginStart="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1"
+            android:layout_marginBottom="10dp"/>
+
+        <TextView
+            android:id="@+id/name_text"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            android:layout_marginStart="10dp"
+            app:layout_constraintStart_toEndOf="@id/profile_pic"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.700"
+            android:text="Maja Ludwińska" />
+
+        <TextView
+            android:id="@+id/email_text"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            android:layout_marginStart="10dp"
+            app:layout_constraintStart_toEndOf="@id/profile_pic"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.950"
+            android:text="majaludwinska@gmail.com" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/account_details_button"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@android:color/transparent"
+        app:icon="@drawable/profile_icon"
+        app:iconTint="?attr/colorPrimary"
+        android:paddingStart="5dp"
+        android:text="Account Details"
+        android:textSize="18sp"
+        android:fontFamily="@font/poppins_regular"
+        android:textAllCaps="false"
+        android:gravity="start|center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintVertical_bias="0.050"
+        style="?android:attr/borderlessButtonStyle"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/themes_layout"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/account_details_button"
+        app:layout_constraintVertical_bias="0.025">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/themes_button"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:backgroundTint="@android:color/transparent"
+            app:icon="@drawable/dark_theme_icon"
+            app:iconTint="?attr/colorPrimary"
+            android:paddingStart="5dp"
+            android:text="Theme"
+            android:textSize="18sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textAllCaps="false"
+            android:gravity="start|center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0"
+            style="?android:attr/borderlessButtonStyle"
+            android:clickable="false"/>
+
+        <RadioGroup
+            android:id="@+id/themes_group"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/themes_button"
+            app:layout_constraintVertical_bias="0.025">
+
+<!--            <RadioButton-->
+<!--                android:id="@+id/sys_def_button"-->
+<!--                android:layout_width="fill_parent"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:text="System Default Theme"-->
+<!--                android:checked="true"-->
+<!--                android:layout_marginStart="10dp"/>-->
+
+            <RadioButton
+                android:id="@+id/light_theme_button"
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:text="Light Theme"
+                android:layout_marginStart="10dp"/>
+
+            <RadioButton
+                android:id="@+id/dark_theme_button"
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:text="Dark Theme"
+                android:layout_marginStart="10dp"/>
+        </RadioGroup>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/terms_n_conditions_button"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@android:color/transparent"
+        app:icon="@drawable/terms_icon"
+        app:iconTint="?attr/colorPrimary"
+        android:paddingStart="5dp"
+        android:text="Terms and Conditions"
+        android:textSize="18sp"
+        android:fontFamily="@font/poppins_regular"
+        android:textAllCaps="false"
+        android:gravity="start|center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/themes_layout"
+        app:layout_constraintVertical_bias="0.025"
+        style="?android:attr/borderlessButtonStyle"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/privacy_policy_button"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@android:color/transparent"
+        app:icon="@drawable/privacy_icon"
+        app:iconTint="?attr/colorPrimary"
+        android:paddingStart="5dp"
+        android:text="Privacy Policy"
+        android:textSize="18sp"
+        android:fontFamily="@font/poppins_regular"
+        android:textAllCaps="false"
+        android:gravity="start|center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/terms_n_conditions_button"
+        app:layout_constraintVertical_bias="0.025"
+        style="?android:attr/borderlessButtonStyle"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/contact_us_button"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@android:color/transparent"
+        app:icon="@drawable/contact_icon"
+        app:iconTint="?attr/colorPrimary"
+        android:paddingStart="5dp"
+        android:text="Contact Us"
+        android:textSize="18sp"
+        android:fontFamily="@font/poppins_regular"
+        android:textAllCaps="false"
+        android:gravity="start|center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/privacy_policy_button"
+        app:layout_constraintVertical_bias="0.025"
+        style="?android:attr/borderlessButtonStyle"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/sign_out_button"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@android:color/transparent"
+        app:icon="@drawable/sign_out_icon"
+        app:iconTint="?attr/colorPrimary"
+        android:paddingStart="5dp"
+        android:text="Sign Out"
+        android:textSize="18sp"
+        android:fontFamily="@font/poppins_regular"
+        android:textAllCaps="false"
+        android:gravity="start|center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/contact_us_button"
+        app:layout_constraintVertical_bias="0.5"
+        style="?android:attr/borderlessButtonStyle"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
