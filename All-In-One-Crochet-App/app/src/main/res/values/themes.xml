@@ -1,0 +1,33 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.All_In_One_Crochet_App" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/green4</item>
+        <item name="colorAccent">@color/green4transparency</item>
+        <item name="colorOnPrimary">@color/green1</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/green5</item>
+        <item name="colorSecondaryVariant">@color/green5</item>
+        <item name="colorOnSecondary">@color/green1</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <!-- Customize your theme here. -->
+        <item name="android:textColor">@color/green1</item>
+        <item name="android:background">@color/green6</item>
+    </style>
+
+    <style name="Theme.SideMenu" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/green4</item>
+        <item name="colorAccent">@color/green4transparency</item>
+        <item name="colorOnPrimary">@color/green1</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/green5</item>
+        <item name="colorSecondaryVariant">@color/green5</item>
+        <item name="colorOnSecondary">@color/green1</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <!-- Customize your theme here. -->
+        <item name="android:textColor">@color/green1</item>
+    </style>
+</resources>
