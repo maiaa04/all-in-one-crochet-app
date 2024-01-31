@@ -92,9 +92,15 @@ class RowCounterOnlyActivity : SettingsActivity() {
 //                    listOfNames = dbData?.secCountersNames?.toArray()
 //                    listOfRows = dbData?.secCountersNames
                 } else {
-//                    db.collection(FirebaseAuth.getInstance().currentUser?.email.toString())
-//                        .document("rowCounterData")
-//                        .set(firebaseData).await()
+                    db.collection(FirebaseAuth.getInstance().currentUser?.email.toString())
+                        .document("rowCounterData")
+                        .set(firebaseData)
+                        .addOnSuccessListener {
+
+                        }
+                        .addOnFailureListener{
+                            
+                        }
 
                 }
             }
