@@ -1,8 +1,8 @@
 package com.example.all_in_one_crochet_app
-
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.util.TypedValue
 import android.widget.Button
@@ -25,157 +25,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-
 class RowCounterOnlyActivity : SettingsActivity() {
-
     val db = Firebase.firestore
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_row_counter_only)
-
-        val viewTitle = findViewById<TextView>(R.id.view_name_text)
-        viewTitle.text = "Row Counter"
-        supportActionBar?.hide()
-
-        // MAIN COUNTER
-        val rowNumberText = findViewById<TextView>(R.id.row_number_text)
-        val plusBtn = findViewById<Button>(R.id.plus_button)
-        val minusBtn = findViewById<Button>(R.id.minus_button)
-        val resetBtn = findViewById<ImageButton>(R.id.reset_button)
-        var arrayOfVisibility = IntArray(10)
-//        var listOfNames = Array<String>(10) { "it = $it" }
-//        var listOfRows = Array<String>(10) { "it = $it" }
-
-
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        val firebaseData = FirestoreData(
-            "",
-            listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-            listOf("", "", "", "", "", "", "", "", "", ""),
-            listOf("", "", "", "", "", "", "", "", "", "")
-        )
-
-        // reading data works
-//        GlobalScope.launch(Dispatchers.IO) {
-//            userId?.let {
-//                val documentSnapshot =
-        db.collection(FirebaseAuth.getInstance().currentUser?.email.toString())
-            .document("rowCounterData")
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
-                    val dbData = documentSnapshot.toObject(FirestoreData::class.java)
-                    rowNumberText.text = dbData?.mainCounterRows
-                    // Debug log to check secCountersVisibility before conversion
-                    Log.d(
-                        "FirestoreData",
-                        "secCountersVisibility: ${dbData?.secCountersVisibility}"
-                    )
-
-                    // Convert secCountersVisibility to IntArray
-                    dbData?.secCountersVisibility?.let { visibility ->
-                        arrayOfVisibility = visibility.toIntArray()
-                    }
-
-                    // Debug log to check arrayOfVisibility after conversion
-                    Log.d(
-                        "ConvertedVisibility",
-                        "arrayOfVisibility: ${arrayOfVisibility.joinToString()}"
-                    )
-
-                    // Check if conversion was successful
-                    Log.d("ConversionSuccess", "Array size: ${arrayOfVisibility.size}")
-
-
-//                    listOfNames = dbData?.secCountersNames?.toArray()
-//                    listOfRows = dbData?.secCountersNames
-                } else {
-                    db.collection(FirebaseAuth.getInstance().currentUser?.email.toString())
-                        .document("rowCounterData")
-                        .set(firebaseData)
-                        .addOnSuccessListener {
-
-                        }
-                        .addOnFailureListener{
-                            
-                        }
-
-                }
-            }
-//        }
-
-        minusBtn.isEnabled = rowNumberText.text != "0"
-
-        plusBtn.setOnClickListener {
-            var numbTemp = (rowNumberText.text.toString()).toInt()
-            numbTemp += 1
-            rowNumberText.text = numbTemp.toString()
-            minusBtn.isEnabled = true
-
-            // modifying data works... kinda
-            val userId = FirebaseAuth.getInstance().currentUser?.uid
-            val email = FirebaseAuth.getInstance().currentUser?.email.toString()
-
-            GlobalScope.launch(Dispatchers.IO) {
-                userId?.let {
-                    db.collection(email).document("rowCounterData")
-                        .update("mainCounterRows", rowNumberText.text.toString()).await()
-                }
-            }
-        }
-
-        minusBtn.setOnClickListener {
-            var numbTemp = (rowNumberText.text.toString()).toInt()
-            if (numbTemp == 1) {
-                numbTemp = 0
-                rowNumberText.text = numbTemp.toString()
-                minusBtn.isEnabled = false
-
-            } else {
-                minusBtn.isEnabled = true
-                numbTemp -= 1
-                rowNumberText.text = numbTemp.toString()
-            }
-
-            val userId = FirebaseAuth.getInstance().currentUser?.uid
-            val email = FirebaseAuth.getInstance().currentUser?.email.toString()
-
-
-            GlobalScope.launch(Dispatchers.IO) {
-                userId?.let {
-                    db.collection(email).document("rowCounterData")
-                        .update("mainCounterRows", rowNumberText.text.toString()).await()
-                }
-            }
-        }
-
-        resetBtn.setOnClickListener {
-            rowNumberText.text = "0"
-            minusBtn.isEnabled = false
-
-            val userId = FirebaseAuth.getInstance().currentUser?.uid
-            val email = FirebaseAuth.getInstance().currentUser?.email.toString()
-
-
-            GlobalScope.launch(Dispatchers.IO) {
-                userId?.let {
-                    db.collection(email).document("rowCounterData")
-                        .update("mainCounterRows", rowNumberText.text.toString()).await()
-                }
-            }
-        }
-
-        val settingsButton = findViewById<ImageButton>(R.id.settings_button)
-        settingsButton.setOnClickListener {
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
-        }
-
-        // SECONDARY COUNTERS
-
-        val addCounterButton = findViewById<MaterialButton>(R.id.add_counter_button)
 
         // counters
         val counter1 = findViewById<ConstraintLayout>(R.id.counter1)
@@ -188,19 +44,6 @@ class RowCounterOnlyActivity : SettingsActivity() {
         val counter8 = findViewById<ConstraintLayout>(R.id.counter8)
         val counter9 = findViewById<ConstraintLayout>(R.id.counter9)
         val counter10 = findViewById<ConstraintLayout>(R.id.counter10)
-
-        Log.d("visibilityArrayInCode", "${arrayOfVisibility.joinToString()}")
-        counter1.isVisible = arrayOfVisibility[0] == 1
-        counter2.isVisible = arrayOfVisibility[1] == 1
-        counter3.isVisible = arrayOfVisibility[2] == 1
-        counter4.isVisible = arrayOfVisibility[3] == 1
-        counter5.isVisible = arrayOfVisibility[4] == 1
-        counter6.isVisible = arrayOfVisibility[5] == 1
-        counter7.isVisible = arrayOfVisibility[6] == 1
-        counter8.isVisible = arrayOfVisibility[7] == 1
-        counter9.isVisible = arrayOfVisibility[8] == 1
-        counter10.isVisible = arrayOfVisibility[9] == 1
-
 
         // counter name edits
         val counter1Edit = findViewById<EditText>(R.id.counter1_edit)
@@ -226,18 +69,6 @@ class RowCounterOnlyActivity : SettingsActivity() {
         val rowNumber9Text = findViewById<TextView>(R.id.row_number9_text)
         val rowNumber10Text = findViewById<TextView>(R.id.row_number10_text)
 
-        // counter plus buttons
-        val plusButton1 = findViewById<Button>(R.id.plus1_button)
-        val plusButton2 = findViewById<Button>(R.id.plus2_button)
-        val plusButton3 = findViewById<Button>(R.id.plus3_button)
-        val plusButton4 = findViewById<Button>(R.id.plus4_button)
-        val plusButton5 = findViewById<Button>(R.id.plus5_button)
-        val plusButton6 = findViewById<Button>(R.id.plus6_button)
-        val plusButton7 = findViewById<Button>(R.id.plus7_button)
-        val plusButton8 = findViewById<Button>(R.id.plus8_button)
-        val plusButton9 = findViewById<Button>(R.id.plus9_button)
-        val plusButton10 = findViewById<Button>(R.id.plus10_button)
-
         // counter minus buttons
         val minusButton1 = findViewById<Button>(R.id.minus1_button)
         val minusButton2 = findViewById<Button>(R.id.minus2_button)
@@ -250,16 +81,174 @@ class RowCounterOnlyActivity : SettingsActivity() {
         val minusButton9 = findViewById<Button>(R.id.minus9_button)
         val minusButton10 = findViewById<Button>(R.id.minus10_button)
 
-        minusButton1.isEnabled = rowNumber1Text.text != "0"
-        minusButton2.isEnabled = rowNumber2Text.text != "0"
-        minusButton3.isEnabled = rowNumber3Text.text != "0"
-        minusButton4.isEnabled = rowNumber4Text.text != "0"
-        minusButton5.isEnabled = rowNumber5Text.text != "0"
-        minusButton6.isEnabled = rowNumber6Text.text != "0"
-        minusButton7.isEnabled = rowNumber7Text.text != "0"
-        minusButton8.isEnabled = rowNumber8Text.text != "0"
-        minusButton9.isEnabled = rowNumber9Text.text != "0"
-        minusButton10.isEnabled = rowNumber10Text.text != "0"
+        val viewTitle = findViewById<TextView>(R.id.view_name_text)
+        viewTitle.text = "Row Counter"
+        supportActionBar?.hide()
+// MAIN COUNTER
+        val rowNumberText = findViewById<TextView>(R.id.row_number_text)
+        val plusBtn = findViewById<Button>(R.id.plus_button)
+        val minusBtn = findViewById<Button>(R.id.minus_button)
+        val resetBtn = findViewById<ImageButton>(R.id.reset_button)
+        var arrayOfVisibility = IntArray(10)
+        var arrayOfNames = Array<String>(10) { "it = $it" }
+        var arrayOfRows = Array<String>(10) { "it = $it" }
+
+
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val firebaseData = FirestoreData(
+            "",
+            listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+            listOf("", "", "", "", "", "", "", "", "", ""),
+            listOf("", "", "", "", "", "", "", "", "", "")
+        )
+    // reading data works
+//       GlobalScope.launch(Dispatchers.IO) {
+//           userId?.let {
+//               val documentSnapshot =
+        db.collection(FirebaseAuth.getInstance().currentUser?.email.toString())
+            .document("rowCounterData")
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val dbData = documentSnapshot.toObject(FirestoreData::class.java)
+                    rowNumberText.text = dbData?.mainCounterRows
+
+                    minusBtn.isEnabled = rowNumberText.text != "0"
+
+                    dbData?.secCountersVisibility?.let { visibility ->
+                        arrayOfVisibility = visibility.toIntArray()
+                    }
+
+                    counter1.isVisible = arrayOfVisibility[0] == 1
+                    counter2.isVisible = arrayOfVisibility[1] == 1
+                    counter3.isVisible = arrayOfVisibility[2] == 1
+                    counter4.isVisible = arrayOfVisibility[3] == 1
+                    counter5.isVisible = arrayOfVisibility[4] == 1
+                    counter6.isVisible = arrayOfVisibility[5] == 1
+                    counter7.isVisible = arrayOfVisibility[6] == 1
+                    counter8.isVisible = arrayOfVisibility[7] == 1
+                    counter9.isVisible = arrayOfVisibility[8] == 1
+                    counter10.isVisible = arrayOfVisibility[9] == 1
+
+                    dbData?.secCountersNames?.let { names ->
+                        arrayOfNames = names.toTypedArray()
+                    }
+
+                    counter1Edit.text = arrayOfNames[0].toEditable()
+                    counter2Edit.text = arrayOfNames[1].toEditable()
+                    counter3Edit.text = arrayOfNames[2].toEditable()
+                    counter4Edit.text = arrayOfNames[3].toEditable()
+                    counter5Edit.text = arrayOfNames[4].toEditable()
+                    counter6Edit.text = arrayOfNames[5].toEditable()
+                    counter7Edit.text = arrayOfNames[6].toEditable()
+                    counter8Edit.text = arrayOfNames[7].toEditable()
+                    counter9Edit.text = arrayOfNames[8].toEditable()
+                    counter10Edit.text = arrayOfNames[9].toEditable()
+
+                    dbData?.secCountersRows?.let { rows ->
+                        arrayOfRows = rows.toTypedArray()
+                    }
+
+                    rowNumber1Text.text = arrayOfRows[0]
+                    rowNumber2Text.text = arrayOfRows[1]
+                    rowNumber3Text.text = arrayOfRows[2]
+                    rowNumber4Text.text = arrayOfRows[3]
+                    rowNumber5Text.text = arrayOfRows[4]
+                    rowNumber6Text.text = arrayOfRows[5]
+                    rowNumber7Text.text = arrayOfRows[6]
+                    rowNumber8Text.text = arrayOfRows[7]
+                    rowNumber9Text.text = arrayOfRows[8]
+                    rowNumber10Text.text = arrayOfRows[9]
+
+                    minusButton1.isEnabled = rowNumber1Text.text != "0"
+                    minusButton2.isEnabled = rowNumber2Text.text != "0"
+                    minusButton3.isEnabled = rowNumber3Text.text != "0"
+                    minusButton4.isEnabled = rowNumber4Text.text != "0"
+                    minusButton5.isEnabled = rowNumber5Text.text != "0"
+                    minusButton6.isEnabled = rowNumber6Text.text != "0"
+                    minusButton7.isEnabled = rowNumber7Text.text != "0"
+                    minusButton8.isEnabled = rowNumber8Text.text != "0"
+                    minusButton9.isEnabled = rowNumber9Text.text != "0"
+                    minusButton10.isEnabled = rowNumber10Text.text != "0"
+
+                } else {
+                    db.collection(FirebaseAuth.getInstance().currentUser?.email.toString())
+                        .document("rowCounterData")
+                        .set(firebaseData)
+                }
+            }
+//   }
+
+        plusBtn.setOnClickListener {
+            var numbTemp = (rowNumberText.text.toString()).toInt()
+            numbTemp += 1
+            rowNumberText.text = numbTemp.toString()
+            minusBtn.isEnabled = true
+
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            val email = FirebaseAuth.getInstance().currentUser?.email.toString()
+            GlobalScope.launch(Dispatchers.IO) {
+                userId?.let {
+                    db.collection(email).document("rowCounterData")
+                        .update("mainCounterRows", rowNumberText.text.toString()).await()
+                }
+            }
+        }
+        minusBtn.setOnClickListener {
+            var numbTemp = (rowNumberText.text.toString()).toInt()
+            if (numbTemp == 1) {
+                numbTemp = 0
+                rowNumberText.text = numbTemp.toString()
+                minusBtn.isEnabled = false
+            } else {
+                minusBtn.isEnabled = true
+                numbTemp -= 1
+                rowNumberText.text = numbTemp.toString()
+            }
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            val email = FirebaseAuth.getInstance().currentUser?.email.toString()
+
+            GlobalScope.launch(Dispatchers.IO) {
+                userId?.let {
+                    db.collection(email).document("rowCounterData")
+                        .update("mainCounterRows", rowNumberText.text.toString()).await()
+                }
+            }
+        }
+        resetBtn.setOnClickListener {
+            rowNumberText.text = "0"
+            minusBtn.isEnabled = false
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            val email = FirebaseAuth.getInstance().currentUser?.email.toString()
+
+            GlobalScope.launch(Dispatchers.IO) {
+                userId?.let {
+                    db.collection(email).document("rowCounterData")
+                        .update("mainCounterRows", rowNumberText.text.toString()).await()
+                }
+            }
+        }
+        val settingsButton = findViewById<ImageButton>(R.id.settings_button)
+        settingsButton.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
+        val addCounterButton = findViewById<MaterialButton>(R.id.add_counter_button)
+
+        // SECONDARY COUNTERS
+
+        // counter plus buttons
+        val plusButton1 = findViewById<Button>(R.id.plus1_button)
+        val plusButton2 = findViewById<Button>(R.id.plus2_button)
+        val plusButton3 = findViewById<Button>(R.id.plus3_button)
+        val plusButton4 = findViewById<Button>(R.id.plus4_button)
+        val plusButton5 = findViewById<Button>(R.id.plus5_button)
+        val plusButton6 = findViewById<Button>(R.id.plus6_button)
+        val plusButton7 = findViewById<Button>(R.id.plus7_button)
+        val plusButton8 = findViewById<Button>(R.id.plus8_button)
+        val plusButton9 = findViewById<Button>(R.id.plus9_button)
+        val plusButton10 = findViewById<Button>(R.id.plus10_button)
+
 
         // counter reset buttons
         val resetButton1 = findViewById<ImageButton>(R.id.reset1_button)
@@ -297,56 +286,57 @@ class RowCounterOnlyActivity : SettingsActivity() {
         val deleteButton9 = findViewById<ImageButton>(R.id.delete9_button)
         val deleteButton10 = findViewById<ImageButton>(R.id.delete10_button)
 
-        // ~~~FUNCTIONS~~~
+    // ~~~FUNCTIONS~~~
+
         // ~add~
-        addRow(plusButton1, minusButton1, rowNumber1Text)
-        addRow(plusButton2, minusButton2, rowNumber2Text)
-        addRow(plusButton3, minusButton3, rowNumber3Text)
-        addRow(plusButton4, minusButton4, rowNumber4Text)
-        addRow(plusButton5, minusButton5, rowNumber5Text)
-        addRow(plusButton6, minusButton6, rowNumber6Text)
-        addRow(plusButton7, minusButton7, rowNumber7Text)
-        addRow(plusButton8, minusButton8, rowNumber8Text)
-        addRow(plusButton9, minusButton9, rowNumber9Text)
-        addRow(plusButton10, minusButton10, rowNumber10Text)
+        addRow(plusButton1, minusButton1, rowNumber1Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        addRow(plusButton2, minusButton2, rowNumber2Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        addRow(plusButton3, minusButton3, rowNumber3Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        addRow(plusButton4, minusButton4, rowNumber4Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        addRow(plusButton5, minusButton5, rowNumber5Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        addRow(plusButton6, minusButton6, rowNumber6Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        addRow(plusButton7, minusButton7, rowNumber7Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        addRow(plusButton8, minusButton8, rowNumber8Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        addRow(plusButton9, minusButton9, rowNumber9Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        addRow(plusButton10, minusButton10, rowNumber10Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
 
-        // ~subtract~
-        subtractRow(minusButton1, rowNumber1Text)
-        subtractRow(minusButton2, rowNumber2Text)
-        subtractRow(minusButton3, rowNumber3Text)
-        subtractRow(minusButton4, rowNumber4Text)
-        subtractRow(minusButton5, rowNumber5Text)
-        subtractRow(minusButton6, rowNumber6Text)
-        subtractRow(minusButton7, rowNumber7Text)
-        subtractRow(minusButton8, rowNumber8Text)
-        subtractRow(minusButton9, rowNumber9Text)
-        subtractRow(minusButton10, rowNumber10Text)
+    // ~subtract~
+        subtractRow(minusButton1, rowNumber1Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        subtractRow(minusButton2, rowNumber2Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        subtractRow(minusButton3, rowNumber3Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        subtractRow(minusButton4, rowNumber4Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        subtractRow(minusButton5, rowNumber5Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        subtractRow(minusButton6, rowNumber6Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        subtractRow(minusButton7, rowNumber7Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        subtractRow(minusButton8, rowNumber8Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        subtractRow(minusButton9, rowNumber9Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        subtractRow(minusButton10, rowNumber10Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
 
-        // ~reset~
-        resetRow(resetButton1, minusButton1, rowNumber1Text)
-        resetRow(resetButton2, minusButton2, rowNumber2Text)
-        resetRow(resetButton3, minusButton3, rowNumber3Text)
-        resetRow(resetButton4, minusButton4, rowNumber4Text)
-        resetRow(resetButton5, minusButton5, rowNumber5Text)
-        resetRow(resetButton6, minusButton6, rowNumber6Text)
-        resetRow(resetButton7, minusButton7, rowNumber7Text)
-        resetRow(resetButton8, minusButton8, rowNumber8Text)
-        resetRow(resetButton9, minusButton9, rowNumber9Text)
-        resetRow(resetButton10, minusButton10, rowNumber10Text)
+    // ~reset~
+        resetRow(resetButton1, minusButton1, rowNumber1Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        resetRow(resetButton2, minusButton2, rowNumber2Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        resetRow(resetButton3, minusButton3, rowNumber3Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        resetRow(resetButton4, minusButton4, rowNumber4Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        resetRow(resetButton5, minusButton5, rowNumber5Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        resetRow(resetButton6, minusButton6, rowNumber6Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        resetRow(resetButton7, minusButton7, rowNumber7Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        resetRow(resetButton8, minusButton8, rowNumber8Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        resetRow(resetButton9, minusButton9, rowNumber9Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
+        resetRow(resetButton10, minusButton10, rowNumber10Text, rowNumber1Text, rowNumber2Text, rowNumber3Text, rowNumber4Text, rowNumber5Text, rowNumber6Text, rowNumber7Text, rowNumber8Text, rowNumber9Text, rowNumber10Text)
 
-        // ~edit~
-        editCounter(editButton1, counter1Edit)
-        editCounter(editButton2, counter2Edit)
-        editCounter(editButton3, counter3Edit)
-        editCounter(editButton4, counter4Edit)
-        editCounter(editButton5, counter5Edit)
-        editCounter(editButton6, counter6Edit)
-        editCounter(editButton7, counter7Edit)
-        editCounter(editButton8, counter8Edit)
-        editCounter(editButton9, counter9Edit)
-        editCounter(editButton10, counter10Edit)
+    // ~edit~
+        editCounter(editButton1, counter1Edit, counter1Edit, counter2Edit, counter3Edit, counter4Edit, counter5Edit, counter6Edit, counter7Edit, counter8Edit, counter9Edit, counter10Edit)
+        editCounter(editButton2, counter2Edit, counter1Edit, counter2Edit, counter3Edit, counter4Edit, counter5Edit, counter6Edit, counter7Edit, counter8Edit, counter9Edit, counter10Edit)
+        editCounter(editButton3, counter3Edit, counter1Edit, counter2Edit, counter3Edit, counter4Edit, counter5Edit, counter6Edit, counter7Edit, counter8Edit, counter9Edit, counter10Edit)
+        editCounter(editButton4, counter4Edit, counter1Edit, counter2Edit, counter3Edit, counter4Edit, counter5Edit, counter6Edit, counter7Edit, counter8Edit, counter9Edit, counter10Edit)
+        editCounter(editButton5, counter5Edit, counter1Edit, counter2Edit, counter3Edit, counter4Edit, counter5Edit, counter6Edit, counter7Edit, counter8Edit, counter9Edit, counter10Edit)
+        editCounter(editButton6, counter6Edit, counter1Edit, counter2Edit, counter3Edit, counter4Edit, counter5Edit, counter6Edit, counter7Edit, counter8Edit, counter9Edit, counter10Edit)
+        editCounter(editButton7, counter7Edit, counter1Edit, counter2Edit, counter3Edit, counter4Edit, counter5Edit, counter6Edit, counter7Edit, counter8Edit, counter9Edit, counter10Edit)
+        editCounter(editButton8, counter8Edit, counter1Edit, counter2Edit, counter3Edit, counter4Edit, counter5Edit, counter6Edit, counter7Edit, counter8Edit, counter9Edit, counter10Edit)
+        editCounter(editButton9, counter9Edit, counter1Edit, counter2Edit, counter3Edit, counter4Edit, counter5Edit, counter6Edit, counter7Edit, counter8Edit, counter9Edit, counter10Edit)
+        editCounter(editButton10, counter10Edit, counter1Edit, counter2Edit, counter3Edit, counter4Edit, counter5Edit, counter6Edit, counter7Edit, counter8Edit, counter9Edit, counter10Edit)
 
-        // ~delete~
+    // ~delete~
         deleteCounter(
             deleteButton1,
             counter1,
@@ -518,7 +508,6 @@ class RowCounterOnlyActivity : SettingsActivity() {
             counter10
         )
 
-
         addCounterButton.setOnClickListener {
             if (!counter1.isVisible) {
                 counter1.isVisible = true
@@ -543,7 +532,6 @@ class RowCounterOnlyActivity : SettingsActivity() {
             } else {
                 showSnackBar("Reached limit of: 10 counters", false)
             }
-
             val userId = FirebaseAuth.getInstance().currentUser?.uid
             val email = FirebaseAuth.getInstance().currentUser?.email.toString()
             val visibilityList = createVisibilityList(
@@ -558,7 +546,6 @@ class RowCounterOnlyActivity : SettingsActivity() {
                 counter9,
                 counter10
             )
-
             GlobalScope.launch(Dispatchers.IO) {
                 userId?.let {
                     db.collection(email).document("rowCounterData")
@@ -568,41 +555,90 @@ class RowCounterOnlyActivity : SettingsActivity() {
         }
     }
 
-
     //~~~FUNCTIONS~~~
-    private fun addRow(plusButton: Button, minusButton: Button, rowText: TextView) {
+    private fun addRow(plusButton: Button, minusButton: Button, rowText: TextView,
+                       rowNumber1: TextView, rowNumber2: TextView,
+                       rowNumber3: TextView, rowNumber4: TextView,
+                       rowNumber5: TextView, rowNumber6: TextView,
+                       rowNumber7: TextView, rowNumber8: TextView,
+                       rowNumber9: TextView, rowNumber10: TextView) {
         plusButton.setOnClickListener {
             var numbTemp = (rowText.text.toString()).toInt()
             numbTemp += 1
             rowText.text = numbTemp.toString()
             minusButton.isEnabled = true
+
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            val email = FirebaseAuth.getInstance().currentUser?.email.toString()
+            val listOfRows = createRowList(rowNumber1, rowNumber2, rowNumber3, rowNumber4, rowNumber5, rowNumber6, rowNumber7, rowNumber8, rowNumber9, rowNumber10)
+
+            GlobalScope.launch(Dispatchers.IO) {
+                userId?.let {
+                    db.collection(email).document("rowCounterData")
+                        .update("secCountersRows", listOfRows).await()
+                }
+            }
         }
     }
-
-    private fun subtractRow(minusButton: Button, rowText: TextView) {
+    private fun subtractRow(minusButton: Button, rowText: TextView,
+                            rowNumber1: TextView, rowNumber2: TextView,
+                            rowNumber3: TextView, rowNumber4: TextView,
+                            rowNumber5: TextView, rowNumber6: TextView,
+                            rowNumber7: TextView, rowNumber8: TextView,
+                            rowNumber9: TextView, rowNumber10: TextView) {
         minusButton.setOnClickListener {
             var numbTemp = (rowText.text.toString()).toInt()
             if (numbTemp == 1) {
                 numbTemp -= 1
                 rowText.text = numbTemp.toString()
                 minusButton.isEnabled = false
-
             } else {
                 minusButton.isEnabled = true
                 numbTemp -= 1
                 rowText.text = numbTemp.toString()
             }
+
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            val email = FirebaseAuth.getInstance().currentUser?.email.toString()
+            val listOfRows = createRowList(rowNumber1, rowNumber2, rowNumber3, rowNumber4, rowNumber5, rowNumber6, rowNumber7, rowNumber8, rowNumber9, rowNumber10)
+
+            GlobalScope.launch(Dispatchers.IO) {
+                userId?.let {
+                    db.collection(email).document("rowCounterData")
+                        .update("secCountersRows", listOfRows).await()
+                }
+            }
         }
     }
-
-    private fun resetRow(resetButton: ImageButton, minusButton: Button, rowText: TextView) {
+    private fun resetRow(resetButton: ImageButton, minusButton: Button, rowText: TextView,
+                         rowNumber1: TextView, rowNumber2: TextView,
+                         rowNumber3: TextView, rowNumber4: TextView,
+                         rowNumber5: TextView, rowNumber6: TextView,
+                         rowNumber7: TextView, rowNumber8: TextView,
+                         rowNumber9: TextView, rowNumber10: TextView) {
         resetButton.setOnClickListener {
             rowText.text = "0"
             minusButton.isEnabled = false
+
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            val email = FirebaseAuth.getInstance().currentUser?.email.toString()
+            val listOfRows = createRowList(rowNumber1, rowNumber2, rowNumber3, rowNumber4, rowNumber5, rowNumber6, rowNumber7, rowNumber8, rowNumber9, rowNumber10)
+
+            GlobalScope.launch(Dispatchers.IO) {
+                userId?.let {
+                    db.collection(email).document("rowCounterData")
+                        .update("secCountersRows", listOfRows).await()
+                }
+            }
         }
     }
-
-    private fun editCounter(editButton: ImageButton, counterNameEdit: EditText) {
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun editCounter(editButton: ImageButton, counterNameEdit: EditText,
+                            counter1edit: EditText, counter2edit: EditText,
+                            counter3edit: EditText, counter4edit: EditText,
+                            counter5edit: EditText, counter6edit: EditText,
+                            counter7edit: EditText, counter8edit: EditText,
+                            counter9edit: EditText, counter10edit: EditText) {
         var counter = 0
         editButton.setOnClickListener {
             if (counter == 0) {
@@ -628,9 +664,18 @@ class RowCounterOnlyActivity : SettingsActivity() {
                 )
                 counter = 0
             }
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            val email = FirebaseAuth.getInstance().currentUser?.email.toString()
+            val listOfNames = createNameList(counter1edit, counter2edit, counter3edit, counter4edit, counter5edit, counter6edit, counter7edit, counter8edit, counter9edit, counter10edit)
+
+            GlobalScope.launch(Dispatchers.IO) {
+                userId?.let {
+                    db.collection(email).document("rowCounterData")
+                        .update("secCountersNames", listOfNames).await()
+                }
+            }
         }
     }
-
     @OptIn(DelicateCoroutinesApi::class)
     private fun deleteCounter(
         deleteButton: ImageButton, counter: ConstraintLayout,
@@ -646,7 +691,6 @@ class RowCounterOnlyActivity : SettingsActivity() {
             rowNumber.text = "0"
             minusButton.isEnabled = false
             counter.isVisible = false
-
             val userId = FirebaseAuth.getInstance().currentUser?.uid
             val email = FirebaseAuth.getInstance().currentUser?.email.toString()
             val listOfVisibility = createVisibilityList(
@@ -661,7 +705,6 @@ class RowCounterOnlyActivity : SettingsActivity() {
                 counter9,
                 counter10
             )
-
             GlobalScope.launch(Dispatchers.IO) {
                 userId?.let {
                     db.collection(email).document("rowCounterData")
@@ -679,7 +722,6 @@ class RowCounterOnlyActivity : SettingsActivity() {
         counter9: ConstraintLayout, counter10: ConstraintLayout
     ): List<Int> {
         var visibilityArray = IntArray(10)
-
         if (counter1.isVisible) {
             visibilityArray[0] = 1
         } else if (!counter1.isVisible) {
@@ -730,10 +772,52 @@ class RowCounterOnlyActivity : SettingsActivity() {
         } else if (!counter10.isVisible) {
             visibilityArray[9] = 0
         }
-
         return visibilityArray.toList()
     }
 
+    private fun createNameList(
+        counter1edit: EditText, counter2edit: EditText,
+        counter3edit: EditText, counter4edit: EditText,
+        counter5edit: EditText, counter6edit: EditText,
+        counter7edit: EditText, counter8edit: EditText,
+        counter9edit: EditText, counter10edit: EditText
+    ): List<String> {
+        var nameArray = arrayOf("", "", "", "", "", "", "", "", "", "")
+        nameArray[0] = counter1edit.text.toString()
+        nameArray[1] = counter2edit.text.toString()
+        nameArray[2] = counter3edit.text.toString()
+        nameArray[3] = counter4edit.text.toString()
+        nameArray[4] = counter5edit.text.toString()
+        nameArray[5] = counter6edit.text.toString()
+        nameArray[6] = counter7edit.text.toString()
+        nameArray[7] = counter8edit.text.toString()
+        nameArray[8] = counter9edit.text.toString()
+        nameArray[9] = counter10edit.text.toString()
+
+        return nameArray.toList()
+    }
+
+    private fun createRowList(rowNumber1: TextView, rowNumber2: TextView,
+                              rowNumber3: TextView, rowNumber4: TextView,
+                              rowNumber5: TextView, rowNumber6: TextView,
+                              rowNumber7: TextView, rowNumber8: TextView,
+                              rowNumber9: TextView, rowNumber10: TextView
+    ): List<String> {
+        var rowArray = arrayOf("", "", "", "", "", "", "", "", "", "")
+
+        rowArray[0] = rowNumber1.text.toString()
+        rowArray[1] = rowNumber2.text.toString()
+        rowArray[2] = rowNumber3.text.toString()
+        rowArray[3] = rowNumber4.text.toString()
+        rowArray[4] = rowNumber5.text.toString()
+        rowArray[5] = rowNumber6.text.toString()
+        rowArray[6] = rowNumber7.text.toString()
+        rowArray[7] = rowNumber8.text.toString()
+        rowArray[8] = rowNumber9.text.toString()
+        rowArray[9] = rowNumber10.text.toString()
+
+        return rowArray.toList()
+    }
 
     // GETTING THEME COLOR ATTRIBUTES ?attr/*color name*
     @ColorInt // returns RGB (ColorInt) int
@@ -745,18 +829,17 @@ class RowCounterOnlyActivity : SettingsActivity() {
             resolvedAttr.data
         }
     }
-
     @ColorRes // returns ColorRes int
     fun Context.getAppColorRes(@AttrRes colorAttr: Int): Int {
         val resolvedAttr = resolveThemeAttr(this, colorAttr)
-        // resourceId is used if it's a ColorStateList, and data if it's a color reference or a hex color
+// resourceId is used if it's a ColorStateList, and data if it's a color reference or a hex color
         return if (resolvedAttr.resourceId != 0) resolvedAttr.resourceId else 0
     }
-
     private fun resolveThemeAttr(context: Context, @AttrRes attrRes: Int): TypedValue {
         val typedValue = TypedValue()
         context.theme.resolveAttribute(attrRes, typedValue, true)
         return typedValue
     }
-
 }
+
+fun String.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this)
