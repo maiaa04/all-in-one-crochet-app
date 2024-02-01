@@ -1,8 +1,10 @@
 package com.example.all_in_one_crochet_app
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import com.google.firebase.auth.FirebaseAuth
@@ -16,6 +18,17 @@ class SignInActivity : Snackbar() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log_in)
+
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            // User is signed in
+            val i: Intent = Intent(this@SignInActivity, RowCounterOnlyActivity::class.java)
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(i)
+        } else {
+            // User is signed out
+            Log.d(TAG, "onAuthStateChanged:signed_out")
+        }
 
         supportActionBar?.hide()
 

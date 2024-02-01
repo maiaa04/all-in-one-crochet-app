@@ -96,7 +96,6 @@ class SignUpActivity : Snackbar() {
             val login: String = emailEditText?.text.toString().trim() {it <= ' '}
             val password: String = passwordEditText?.text.toString().trim() {it <= ' '}
             val name: String = nameEditText?.text.toString().trim() {it <= ' '}
-            val id: String = "${name.replace(" ", "")}_$login"
 
 
 
@@ -107,7 +106,7 @@ class SignUpActivity : Snackbar() {
                         val firebaseUser: FirebaseUser = task.result!!.user!!
                         showSnackBar("You are registered successfully. Your user id is ${firebaseUser.uid}",true)
 
-                        val user = User(id,
+                        val user = User(login,
                             name,
                             true,
                             login,
